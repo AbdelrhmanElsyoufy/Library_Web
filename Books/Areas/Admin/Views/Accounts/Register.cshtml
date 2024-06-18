@@ -1,0 +1,325 @@
+﻿@model RegsiterVM
+
+<div class="content-wrapper">
+        <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>@Resource.UsersBigTitle</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">@Resource.UsersHomePage</a></li>
+              <li class="breadcrumb-item active">@Resource.UsersManage</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-start  ">
+              <h3 class="card-title" style="margin-left:20px">@Resource.RolesMidTitle</h3>
+              <div class="card-tools">
+                  <button type="button" class="btn btn-outline-primary rounded-pill" data-toggle="modal"
+                  data-target="#exampleModal" onclick="Rest()">@Resource.AddUser</button>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="registertable" class="table table-bordered table-responsive table-hover">
+                <thead>
+                <tr>
+               
+                  <th style="width:15%" >@Resource.UserName</th>
+                  <th style="width:15%" >@Resource.RolesGroupName</th>
+                  <th style="width:10%" >@Resource.RegisterEmail</th>
+                  <th style="width:15%" >@Resource.UserImage</th>                
+                  <th style="width:10%" >@Resource.activeUser</th>                
+                  <th style="width:35%" >@Resource.RolesActions</th> 
+                           
+
+
+                </tr>
+
+                </thead>
+                <tbody>
+                               @if (Model != null)
+                                {
+                                    @foreach (var user in Model.Users)
+                                    {
+
+                                             <tr style="text-align:center">
+                                             <td>@user.Name</td>
+                                             <td >
+                                                      <span style="width:100px; height:25px" class="badge @BooksHelper.GroupColor(user.Role) font-weight-bold">@user.Role</span>
+                                             </td>
+                                             <td>@user.Email</td>
+                                             <td class="align-self-center">
+                                                      <img src= "~/images/users/@user.ImageUser" alt="Image" class="img-circle" style="width:70px; height:50px" />
+
+                                             </td>
+                                               <td><input type="checkbox" disabled checked="@user.ActiveUser" style="width:30px; height:30px" ></td>
+
+
+                                                     <td> 
+                                                
+                                                
+                                                                 <input type="button" class="btn btn-info btn-sm" onclick="EditUser('@user.UserId', '@user.Name',
+                                                            '@user.Email','@user.ImageUser','@user.Role','@user.ActiveUser')" value="@Resource.RolesBtnEdit" data-toggle="modal" data-target="#exampleModal" />
+                                             
+                                               
+                                                   <input type="button" class="btn btn-danger btn-sm" onclick="DeleteUser(`@user.UserId`)" value="@Resource.RolesBtnDelete" />
+                                                   <input type="button" class="btn btn-success btn-sm" onclick="PasswordRecovery('@user.UserId')" 
+                                                    value="@Resource.btnChangePassword"  data-toggle="modal" data-target="#PasswordRecoveryModel"/>
+                                                       
+                                                </td>
+                                                    </tr>
+                                    }
+                                }
+
+
+                            </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+
+
+        <!-- /.col -->
+      </div>
+      </div>
+      <!-- /.row -->
+    </section>
+
+</div>
+
+                                            <!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">@Resource.RolesAddRole</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form asp-action="Register" asp-controller="Accounts" method="post" enctype="multipart/form-data"> 
+
+   <!--Name-->
+        <div class="form-group mb-3">
+      <input type="hidden" class="form-control" asp-for="NewRegsiter.Id" id="UserId"/>
+      
+              
+        <label class="control-label" asp-for="NewRegsiter.Name">@Resource.RegisterName</label>
+          <input asp-for="NewRegsiter.Name" class="form-control" id="UserName"/>
+           <span asp-validation-for="NewRegsiter.Name" class="text-danger"></span>
+        </div>
+        <!--Email-->
+        <div class="form-group mb-3">
+          <label class="control-label" asp-for="NewRegsiter.Email" >@Resource.RegisterEmail</label>
+          <input asp-for="NewRegsiter.Email" class="form-control" id="UserEmail"/>     
+          <span asp-validation-for="NewRegsiter.Email" class="text-danger"></span>
+        </div>
+         
+           <!--image-->
+           <div class="form-group">
+            <img src="" hidden class="img-circle"
+            style="width:40px;height:40px"   id="Image" alt="Not Found"/>
+           </div>
+        <div class="form-group mb-3">
+          <input type="text" hidden class="form-control" asp-for="NewRegsiter.ImageUser"   id="HideImageUser"/>
+
+          <label class="control-label" asp-for="NewRegsiter.ImageUser">@Resource.UserImage</label>
+          <input asp-for="NewRegsiter.ImageUser"  type ="file" class="form-control" id="UserImage"/>     
+          <span asp-validation-for="NewRegsiter.Email" class="text-danger"></span>
+        </div>
+        <!--Group Name-->
+        <div class="form-group mb-3">
+          <label class="control-label" asp-for="NewRegsiter.RoleName">@Resource.RolesGroupName</label>
+          <select asp-for="NewRegsiter.RoleName" 
+               asp-items="@(new SelectList(Model.Roles , "Name" , "Name"))" class="form-control text-center font-weight-bold" id="UserRole"> 
+              <option class="text-center font-weight-bold" >@Resource.SelectGroupName</option>
+          </select>    
+          <span asp-validation-for="NewRegsiter.RoleName" class="text-danger"></span>
+        </div>
+
+
+       <!--Password-->
+        <div class="form-group mb-3 " id="UserPasswordg">
+            <label class="control-label" asp-for="NewRegsiter.Password">@Resource.Registerpassword</label>
+          <input asp-for="NewRegsiter.Password" class="form-control" id="UserPassword">        
+          
+          <span asp-validation-for="NewRegsiter.Password" class="text-danger"></span>
+        </div>
+      <!--Confirmpassword-->
+        <div class="form-group  mb-3 " id="UserConfPasswordg">
+            <label class="control-label" asp-for="NewRegsiter.ConfirmPassword">@Resource.RegisterConfirmpassword</label>
+          <input asp-for="NewRegsiter.ConfirmPassword" class="form-control" id="UserConfPassword">        
+
+          <span asp-validation-for="NewRegsiter.ConfirmPassword" class="text-danger"></span>
+        </div>        
+
+
+        <!--Active User-->
+   
+              <div class="form-check mb-4">
+              <input  class="form-check-input" asp-for="NewRegsiter.ActiveUser" id="Useractive"/>   
+              <label class="form-check-label" asp-for="NewRegsiter.ActiveUser">@Resource.activeUser</label>
+           
+
+        </div> 
+
+        <div class="modal-footer-rtl">
+            <input type="submit" class="btn btn-primary" value="@Resource.UsersSaveBtn"  id="btnAction"/>
+
+        <button type="button" class="btn btn-danger" data-dismiss="modal">@Resource.RolesCancelRole</button>
+      </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<div class="modal fade" id="PasswordRecoveryModel" tabindex="-1" role="dialog" aria-labelledby="PasswordRecoveryModel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">@Resource.PasswordRecovery</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form asp-action="PasswordRecovery" asp-controller="Accounts" method="post"> 
+
+  
+
+
+       <!--Password-->
+      <div class="form-group  mb-3 " id="UserConfPasswordg">
+          <input asp-for="PasswordRecoveryVM.Id"  id="UserNewPasswordId" hidden  class="form-control"/>
+            <label class="control-label" asp-for="PasswordRecoveryVM.NewPassword">@Resource.RegisterConfirmpassword</label>
+          <input asp-for="PasswordRecoveryVM.NewPassword" class="form-control" >        
+
+          <span asp-validation-for="PasswordRecoveryVM.NewPassword" class="text-danger"></span>
+        </div>        
+      <!--Confirmpassword-->
+        <div class="form-group  mb-3 " id="UserConfPasswordg">
+            <label class="control-label" asp-for="PasswordRecoveryVM.ConfirmNewPassword">@Resource.RegisterConfirmpassword</label>
+          <input asp-for="PasswordRecoveryVM.ConfirmNewPassword" class="form-control" id="UserConfPassword">        
+
+          <span asp-validation-for="PasswordRecoveryVM.ConfirmNewPassword" class="text-danger"></span>
+        </div>        
+
+
+        <div class="modal-footer-rtl">
+            <input type="submit" class="btn btn-primary" value="@Resource.UsersSaveBtn"  id="btnAction"/>
+
+        <button type="button" class="btn btn-danger" data-dismiss="modal">@Resource.RolesCancelRole</button>
+      </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+@section Scripts{
+
+
+    @if (Context.Session.GetString("msgType") != null && Context.Session.GetString("msgType") != "")
+    {
+        if (Context.Session.GetString("msgType") == "success")
+        {
+                                    <script >  
+                                    Swal.fire({
+                                    position: 'top-center',
+                                    icon: 'success',
+                                    title:'@Context.Session.GetString("title")',
+                                    text: '@Html.Raw(Context.Session.GetString("msg"))',
+                                    showConfirmButton: 'حسنا',
+                                });
+                                    </script>
+
+
+        }
+        else
+        {
+                                     <script> 
+
+                                Swal.fire({
+                                    position: 'top-center',
+                                    icon: 'error',
+                                     title:'@Context.Session.GetString("title")',
+                                      text: '@Html.Raw(Context.Session.GetString("msg"))',
+                                    showConfirmButton: 'حسنا',
+                                });
+
+
+                        </script>
+        }
+        Context.Session.SetString("msgType", "");
+    }
+        
+              <script src="~/modules/register.js">   </script>
+              <!--Declration-->
+             <script>
+                        //   delete
+                                let deleteTitle = `@Resource.alertDeleteTitle`;
+                                let deleteContentCheck = `@Html.Raw(Resource.alertDeleteContentCheck)`;
+                                let deleteContent = `@Html.Raw(Resource.alertDeleteContent)`;
+                                let ok = `@Resource.alertOK`;
+                             
+
+                             //edit
+                                                 
+
+                                    let editTitle = `@Resource.RolesBtnEdit`
+                                    let editContent = `@Resource.EditTitle`
+                                    let imagePath = `@BooksHelper.getImagesPath`;
+                                    let btnEdit = `@Html.Raw(Resource.RolesBtnEdit)`;
+
+
+                             //       //rest
+                                    let role = `@(Resource.SelectGroupName)`;
+                                    let save = `@Html.Raw(Resource.UsersSaveBtn)`;
+                                    let modelTitle = `@(Resource.AddUser)`;
+
+             </script>
+               
+             
+                
+
+
+
+           
+
+}

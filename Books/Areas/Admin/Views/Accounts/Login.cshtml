@@ -1,0 +1,117 @@
+﻿@model LoginVM
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AdminLTE 3 | Log in</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="~/admin/plugins/fontawesome-free/css/all.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- icheck bootstrap -->
+<link rel="stylesheet" href="~/admin/dist/css/bootstrap-rtl.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="~/admin/dist/css/adminlte.min.css">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a href="../../index2.html"><b>Admin</b>LTE</a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="container-fluid">
+      <div class="card " style="direction:rtl">
+    <div class="card-body login-card-body">
+      <h3 class="login-box-msg">@Resource.SignIn</h3>
+
+      <form asp-action="login" asp-controller="accounts" class="signin-form" method="post">
+     
+        @if(ViewBag.LoginError == false)
+        {
+            <div class="bg-danger w-100 font-weight-bold text-center">@Resource.LoginError</div> <br />
+        }
+        <div class="form-group mb-3"> 
+          
+          <input  asp-for="Email" class="form-control" placeholder="@Resource.RegisterEmail">
+         
+          <span asp-validation-for="Email" class="text-danger d-block  w-100  text-end"  ></span>
+       
+
+        </div>
+     
+        <div class="form-group mb-3">
+
+    
+          <input asp-for="Password" class="form-control" placeholder="@Resource.Registerpassword">
+  
+          <span asp-validation-for="Password" class="text-danger text-danger d-block  w-100  text-end"></span>
+        </div>
+    
+        
+        <div class="row m-0 mb-3">
+          <div class="col-3 d-flex justify-content-center">
+            <div class="form-check">
+              
+              <input  asp-for="RememberMe" id="remember"  class="form-check-input align-self-end w-30 h-30" />
+                <label for="remember"  class="form-check-label">
+                   <strong> @Resource.RememberMe</strong>
+              </label>
+              
+            </div>
+          </div>
+          <!-- /.col -->
+
+      
+          <!-- /.col -->
+        </div>
+
+            
+            <button type="submit" class="btn btn-primary btn-block btn-flat">@Resource.SignIn</button>
+          
+      </form>
+
+
+      
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+  </div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="~/admin/plugins/jquery/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"> </script>
+<!-- Bootstrap 4 -->
+<script src="~/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!--validation-->
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+</body>
+</html>
+
+
+      
+
+
+
+
+
+
+
+
+

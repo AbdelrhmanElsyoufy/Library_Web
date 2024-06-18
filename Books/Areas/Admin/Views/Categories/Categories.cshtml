@@ -1,0 +1,247 @@
+﻿@model CategoryVM
+@inject UserManager<ApplicationUser> userManager
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<style>
+     /* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: right;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+} 
+</style>
+<div class="content-wrapper">
+    <!--Content-Header-->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">@Resource.Categories</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="/Admin/Home/Index">@Resource.RolesHomePage</a></li>
+                        <li class="breadcrumb-item active">@Resource.UsersManage</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End Content-Header-->
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-start">
+                        <h3 class="card-title" style="margin-left:20px">@Resource.Categories</h3>
+                        <div class="card-tools ">
+                            <!-- Button trigger modal -->
+                            <button type="button" style="margin-top:-5px"
+                                    class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="Rest()">
+                                @Resource.SaveNewCategory
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <!-- Tab links -->
+                        <div class="tab">
+                            <button class="tablinks" onclick="openCity(event, 'Categories')" id="defaultOpen">@Resource.Categories</button>
+                            <button class="tablinks" onclick="openCity(event, 'LogCategories')" id="defaultTow">@Resource.CategoriesLog</button>
+                        </div>
+
+                        <!-- Tab content -->
+                        <div id="Categories" class="tabcontent">
+                            <table id="tableCategory" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <td>@Resource.CategoryName</td>
+                                        <td>@Resource.CategoryDescription</td>
+                                        <td>@Resource.RolesActions</td>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Categories)
+                                    {
+                                            <tr>
+                                                <td>
+                                                @item.Name
+                                                </td>
+                                                <td>
+                                                @item.Description
+                                                </td>
+                                                <td>
+                                                    <input type="button" class="btn btn-info btn-sm" onclick="Edit('@item.Id', '@item.Name','@item.Description')" value="@Resource.RolesBtnEdit" data-bs-toggle="modal" data-bs-target="#exampleModal" />|
+                                                    <input type="button" class="btn btn-danger btn-sm" onclick="Delete('@item.Id')" value="@Resource.RolesBtnDelete" />
+                                                </td>
+                                            </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="LogCategories" class="tabcontent">
+                            <table id="tableLogCategory" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>@Resource.CategoryName</td>
+                                        <td>@Resource.ActionName</td>
+                                        <td>@Resource.ActionDate</td>
+                                        <td>@Resource.UserName</td>                          
+                                        <td>@Resource.RolesActions</td>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.LogCategories)
+                                    {
+                                            <tr>
+                                                <td>#</td>
+                                                <td>@item.Category.Name</td>
+                                                <td>
+                                             
+                                                     <span class="badge @BooksHelper.GroupColor(@item.Action)" style="width:150px; height:25px">@item.Action</span>
+                                                     
+             
+                                                </td>
+                                                <td>@item.Date</td>
+                                                <td>@userManager.FindByIdAsync(item.UserId.ToString()).Result?.Name</td>
+
+                                                <td>
+                                                    <input type="button" class="btn btn-danger btn-sm" onclick="DeleteLog('@item.Id')" value="@Resource.RolesBtnDelete" />
+                                                </td>
+                                            </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+
+
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog card card-success card-outline">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="title">@Resource.SaveNewCategory</h5>
+                <a href="#" class="btn-close" data-bs-dismiss="modal" aria-label="Close">x</a>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Save" asp-controller="Categories" method="post">
+                    <input type="text" hidden class="form-control" asp-for="NewCategory.Id" id="categoryId" />
+                    <div class="form-group">
+                        <label asp-for="NewCategory.Name" class="control-lable">@Resource.CategoryName</label>
+                        <input type="text" class="form-control" asp-for="NewCategory.Name" id="categoryName" />
+                        <span asp-validation-for="NewCategory.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewCategory.Description" class="control-lable">@Resource.CategoryDescription</label>
+                        <input type="text" class="form-control" asp-for="NewCategory.Description" id="description" />
+                        <span asp-validation-for="NewCategory.Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="modal-footer-rtl" style="padding:0 15px 15px 0">
+                        <input type="submit" class="btn btn-success" value="@Resource.UsersSaveBtn" id="btnAction" />
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Resource.RolesCancelRole</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @if (!string.IsNullOrEmpty(Context.Session.GetString(BooksHelper.msgType)))
+    {
+        if (Context.Session.GetString(BooksHelper.msgType) == Resource.successType)
+        {
+                        <script>
+
+                            Swal.fire({
+                                title: '@Context.Session.GetString(BooksHelper.title)',
+                                text: '@Html.Raw(@Context.Session.GetString(BooksHelper.msg))',
+                                confirmButtonText: '@Resource.alertOK',
+                                icon: 'success'
+                            });
+                        </script>
+
+        }
+        else
+        {
+                        <script>
+                             Swal.fire({
+                                 title: '@Context.Session.GetString(BooksHelper.title)',
+                                 text: '@Html.Raw(@Context.Session.GetString(BooksHelper.msg))',
+                                 confirmButtonText: '@Resource.alertOK',
+                                 icon: 'success'
+                             });
+                        </script>
+        }
+        Context.Session.SetString(BooksHelper.msgType, "");
+    }
+
+        <script src="~/modules/"> </script>
+
+        <script>
+         
+
+           @*let TitleEditCategory = '@Html.Raw(Resource.TitleEditCategory)';
+            let Edit = '@Html.Raw(Resource.RolesBtnEdit)';
+            let AddNewCategory = '@Html.Raw(Resource.SaveNewCategory)';
+            let btnSave =  '@Html.Raw(Resource.UsersSaveBtn)';
+            let TitleMsgDelete = '@Html.Raw(Resource.alertDeleteTitle)';
+            let TextMsgDelete = '@Html.Raw(Resource.alertDeleteContentCheck)';
+            let confirmButtonText = '@Html.Raw(Resource.alertOK)';
+            let cancelButtonText = '@Html.Raw(Resource.RolesCancelRole)';
+         
+            let MsgDeletedOkCategory = '@Html.Raw(Resource.alertDeleteContent)';
+            let Success = '@Html.Raw(Resource.successType)';*@
+        </script>
+    }

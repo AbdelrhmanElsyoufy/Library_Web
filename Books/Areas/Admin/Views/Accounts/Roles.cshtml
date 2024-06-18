@@ -1,0 +1,176 @@
+﻿@model RolesVM
+
+
+
+<div class="content-wrapper">
+        <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>@Resource.RolesBigTitle</h1>
+          </div>
+          <div class="col-sm-6">
+
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">@Resource.RolesHomePage</a></li>
+              <li class="breadcrumb-item active">@Resource.RolesManageBooks</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-start  ">
+              <h3 class="card-title" style="margin-left:20px">@Resource.RolesMidTitle</h3>
+              <div class="card-tools">
+                  <button type="button" class="btn btn-outline-primary rounded-pill" data-toggle="modal"
+                  data-target="#exampleModal" onclick="Rest()">@Resource.RolesAddRole</button>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="roleTable" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>@Resource.RolesGroupName</th>
+                  <th>@Resource.RolesActions</th>
+
+
+                </tr>
+
+                </thead>
+                <tbody>
+                                @if (Model != null)
+                                {
+                                    @foreach (var role in Model.Roles)
+                                    {
+                                            <tr>
+                                                <td>
+                                                @switch (role.Name)
+                                                {
+
+                                                    case "SuperAdmin":
+                                                                            <span class="badge badge-danger " style="font-size:15px">@role.Name</span>
+                                                        break;
+
+                                                    case "Admin":
+                                                                                            <span class="badge badge-success" style="font-size:15px">@role.Name</span>
+                                                        break;
+                                                    default:
+                                                                                    <span class="badge badge-warning" style="font-size:15px">@role.Name</span>
+                                                        break;
+                                                }
+                                                </td>
+                                                <td>
+                                                             <button class="btn btn-info" onclick="Edit('@role.Id','@role.Name')"  data-toggle="modal"
+                  data-target="#exampleModal">@Resource.RolesBtnEdit</button>
+                                                    <button class="btn btn-danger" onclick="Delete(`@role.Id`)">@Resource.RolesBtnDelete</button>
+                                                   
+                                                </td>
+                                            </tr>
+                                    }
+                                }
+
+
+                            </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+
+
+        <!-- /.col -->
+      </div>
+      </div>
+      <!-- /.row -->
+    </section>
+
+</div>
+
+                                            <!-- Button trigger modal -->
+                                         
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">@Resource.RolesAddRole</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form asp-action="Roles" asp-controller="Accounts" method="post"> 
+            <div class="form-group"> 
+                    <input type="hidden" class="form-control" asp-for="NewRole.Id" id="RoleId"/>
+              </div>
+              <div class="form-group"> 
+                  <label class="control-label" asp-for="NewRole.Name" id="RoleNameTitle">@Resource.RolesGroupName</label>
+                    <input type="text" class="form-control" asp-for="NewRole.Name" id="RoleName"/>
+                    <span asp-validation-for="NewRole.Name" class="text-danger"></span>
+              </div>
+              <div class="modal-footer-rtl">
+            <input type="submit" class="btn btn-primary" value="@Resource.RolesSaveRole"  id="btnAction"/>
+
+        <button type="button" class="btn btn-danger" data-dismiss="modal">@Resource.RolesCancelRole</button>
+      </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+@section Scripts{
+
+       
+    @if (Context.Session.GetString("msgType") != null && Context.Session.GetString("msgType") != "")
+    {
+        if (Context.Session.GetString("msgType") == "success")
+        {
+                        <script >  
+                        Swal.fire({
+                        position: 'top-center',
+                        icon: 'success',
+                        title:'@Context.Session.GetString("title")',
+                        text: '@Html.Raw(Context.Session.GetString("msg"))',
+                        showConfirmButton: 'حسنا',
+                    });
+                        </script>
+
+         
+        }
+        else
+        {
+                         <script> 
+
+                    Swal.fire({
+                        position: 'top-center',
+                        icon: 'error',
+                         title:'@Context.Session.GetString("title")',
+                          text: '@Html.Raw(Context.Session.GetString("msg"))',
+                        showConfirmButton: 'حسنا',
+                    });
+
+
+            </script>
+        }
+        Context.Session.SetString("msgType","");
+    }
+
+    <script src="~/Models/Roles.js"></script>
+       
+
+        <script>
+    
+    </script>
+   
+}
